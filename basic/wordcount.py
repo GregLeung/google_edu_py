@@ -39,6 +39,30 @@ print_words() and print_top().
 
 import sys
 
+def getWordsDict(fileName):
+  wordDict = {}
+  f = open(fileName, 'rU')
+  for line in f:
+    words = line.split()
+    for word in words:
+      if word in wordDict:
+        wordDict[word] = wordDict[word] + 1
+      else:
+        wordDict[word] = 1
+  f.close()
+  return wordDict
+
+def print_words(fileName):
+  for k, v in getWordsDict(fileName).items():
+    print k, v
+  return 
+
+def print_top():
+
+  return
+
+
+
 # +++your code here+++
 # Define print_words(filename) and print_top(filename) functions.
 # You could write a helper utility function that reads a file
