@@ -39,12 +39,17 @@ print_words() and print_top().
 
 import sys
 
+def sortByCount(pair):
+  return pair[1]
+
+
 def getWordsDict(fileName):
   wordDict = {}
   f = open(fileName, 'rU')
   for line in f:
     words = line.split()
     for word in words:
+      word = word.lower()
       if word in wordDict:
         wordDict[word] = wordDict[word] + 1
       else:
@@ -53,12 +58,17 @@ def getWordsDict(fileName):
   return wordDict
 
 def print_words(fileName):
-  for k, v in getWordsDict(fileName).items():
-    print k, v
-  return 
-
-def print_top():
-
+  wordDict = getWordsDict(fileName)
+  for key in sorted(wordDict.keys()):
+    print (key, wordDict[key])
+def print_top(fileName):
+  wordDict = getWordsDict(fileName)
+  count = 1
+  for item in sorted(wordDict.items(), key=sortByCount, reverse=True):
+    print (item[0], item[1])
+    count += 1
+    if count > 20:
+      break
   return
 
 
@@ -75,7 +85,7 @@ def print_top():
 # calls the print_words() and print_top() functions which you must define.
 def main():
   if len(sys.argv) != 3:
-    print 'usage: ./wordcount.py {--count | --topcount} file'
+    print ('usage: ./wordcount.py {--count | --topcount} file')
     sys.exit(1)
 
   option = sys.argv[1]
@@ -85,7 +95,7 @@ def main():
   elif option == '--topcount':
     print_top(filename)
   else:
-    print 'unknown option: ' + option
+    print ('unknown option: ') + option
     sys.exit(1)
 
 if __name__ == '__main__':
