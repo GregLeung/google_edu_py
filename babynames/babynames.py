@@ -40,9 +40,28 @@ def extract_names(filename):
   followed by the name-rank strings in alphabetical order.
   ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
   """
-  # +++your code here+++
-  return
+  f = open(filename, 'r')
+  nameRankDict = {}
+  for line in f:
+    yearMatch = re.search(r'>Popularity\sin\s(\d+)<', line)
+    nameRankMatch = re.search(r'<td>(\d+)</td><td>(\D+)</td><td>(\D+)</td>', line)
+    if yearMatch:
+      year = yearMatch.group(1)
+    if nameRankMatch:
+      nameRankDict[nameRankMatch.group(2)] = nameRankMatch.group(1)
+      nameRankDict[nameRankMatch.group(3)] = nameRankMatch.group(1)
+  result = []
+  result.append(year)
+  for key in sorted(nameRankDict.keys()):
+    result.append(key + ' ' + nameRankDict[key])
+  return result
 
+def write_to_file(result, filename):
+  f = open(filename + '.summary', 'w')
+  for value in result:
+    f.write(value + '\n')
+  f.close()
+  return
 
 def main():
   # This command-line parsing code is provided.
@@ -60,9 +79,12 @@ def main():
     summary = True
     del args[0]
 
-  # +++your code here+++
-  # For each filename, get the names, then either print the text output
-  # or write it to a summary file
+  for filename in args:
+    result = extract_names(filename)
+    if summary:
+      write_to_file(result, filename)
+    else:
+      print('\n'.join(result) + '\n')
   
 if __name__ == '__main__':
   main()
