@@ -5,6 +5,7 @@
 
 # Google's Python Class
 # http://code.google.com/edu/languages/google-python-class/
+# /Users/FrankLeung/Documents/Project/google_edu_py/copyspecial
 
 import sys
 import re
@@ -18,6 +19,30 @@ import commands
 # +++your code here+++
 # Write functions and modify main() to call them
 
+def get_special_paths(dir):
+  filenames = os.listdir(dir)
+  result = []
+  for filename in filenames:
+    match = re.search(r'.+__\w+__.+', filename)
+    if match:
+      result.append(filename)
+  return result
+
+def copy_to(paths, dir):
+  if not os.path.exists(paths):
+    os.mkdir(paths)
+  for filename in get_special_paths(dir):
+    shutil.copy(os.path.join(os.path.abspath(dir), filename), paths)
+
+def zip_to(dir, zippath):
+  cmd = 'zip -j ' + zippath + ' '
+  for filename in get_special_paths(dir):
+    cmd += os.path.join(os.path.abspath(dir), filename) + ' '
+  try:
+    output = commands.getoutput(cmd)
+    print(output)
+  except:
+    sys.stderr('cannot find path: ' + zippath)
 
 
 def main():
@@ -28,7 +53,7 @@ def main():
   # which is the script itself.
   args = sys.argv[1:]
   if not args:
-    print "usage: [--todir dir][--tozip zipfile] dir [dir ...]";
+    print "usage: [--todir dir][--tozip zipfile] dir [dir ...]"
     sys.exit(1)
 
   # todir and tozip are either set from command line
@@ -37,19 +62,24 @@ def main():
   todir = ''
   if args[0] == '--todir':
     todir = args[1]
+    fromdir = args[2]
     del args[0:2]
+    copy_to(todir, fromdir)
 
   tozip = ''
   if args[0] == '--tozip':
     tozip = args[1]
+    fromdir = args[2]
     del args[0:2]
+    zip_to(fromdir, tozip)
 
   if len(args) == 0:
     print "error: must specify one or more dirs"
     sys.exit(1)
 
-  # +++your code here+++
-  # Call your functions
-  
+  if not todir and not tozip:
+    for filename in get_special_paths(args[0]):
+      print(filename)
+
 if __name__ == "__main__":
   main()
